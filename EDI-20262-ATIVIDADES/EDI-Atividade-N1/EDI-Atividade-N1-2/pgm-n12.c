@@ -1,5 +1,14 @@
+/*----------------------------------------------------------------------------------*/
+/*                                FATEC-Ipiranga                                    */        
+/*                            ADS - Estrutura de Dados                              */
+/*                             Id da Atividade: N1-2                                   */
+/*             Objetivo: Gerenciar o estoque de uma loja de construcao              */
+/*                                                                                  */
+/*                                  Autor: Renan Cavalcante Nascimento              */
+/*                                                                   Data:25/08/2026*/
+/*----------------------------------------------------------------------------------*/
+
 #include <stdio.h>
-//Renan Cavalcante Nascimento, Fatec Ipiranga
 
 #define TAMANHO_ESTOQUE 5
 #define ESTOQUE_MINIMO 10
@@ -12,7 +21,7 @@ void preencherEstoque(void);
 void exibirEstoque(int momento);
 float calcularMediaEstoque(void);
 void simularReposicao(int quantidadeAtual, int reposicao);
-void aplicarResicaoGeral(int reposicao);
+void aplicarReposicaoGeral(int reposicao);
 void identificarEstoqueCritico(int minimo);
 
 void exibirCabecalho(void) {

@@ -1,5 +1,5 @@
 #include <stdio.h>
-\\Renan Cavalcante Nascimento, Fatec Ipiranga
+//Renan Cavalcante Nascimento, Fatec Ipiranga
 
 #define TAMANHO_ESTOQUE 5
 #define ESTOQUE_MINIMO 10

@@ -1,3 +1,14 @@
+/*----------------------------------------------------------------------------------*/
+/*                                FATEC-Ipiranga                                    */        
+/*                            ADS - Estrutura de Dados                              */
+/*                             Id da Atividade: N1-4                                */
+/*    Objetivo: Estrutura de dados do tipo Fila Dinâmica Encadeada em C             */
+/*                                                                                  */
+/*    Autor: Renan Cavalcante Nascimento, ADS Noturno                               */
+/*                                                                   Data:14/09/2026*/
+/*----------------------------------------------------------------------------------*/
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -170,3 +181,109 @@ void listarFila(Fila f){
 		printf("ID: %d - Nome: %s\n", atual->id, atual->nome);
 		atual = atual->prox;
 	}
+	printf("=========================\n");
+
+}
+
+/* Remove TODOS os pacientes da fila, liberando a memória de cada um.
+ * A fila continua existindo, mas fica vazia.
+ */
+void esvaziarFila(Fila f){
+	NoPtr atual = f->ini;
+	NoPtr proximo;
+
+	while (atual != NULL){
+		// Guardamos o endereço do próximo ANTES de liberar o atual.
+		// Se liberássemos primeiro, perderíamos o caminho para o resto da fila.
+		proximo = atual->prox;
+		free(atual);
+		atual = proximo;
+	}
+
+	// Sem pacientes, início e fim voltam a apontar para NULL
+	f->ini = NULL;
+	f->fim = NULL;
+
+	printf(">> Realizado a liberação de memória da fila.\n");
+}
+
+/* Libera a memória do Cabecalho, ou seja, da própria fila.
+ * Deve ser chamada depois de esvaziarFila, quando a fila não será mais usada.
+ */
+void destruirFila(Fila f){
+	free (f);
+}
+
+int main(){
+	// Cria a fila de atendimento do hospital
+	Fila filaAtendimento = Criar();
+	int opcao, id;
+	char nome[50];
+
+	// O menu se repete até o usuário digitar 0 para sair
+	do {
+		printf("\n--- SISTEMA HOSPITALAR (FATEC IPIRANGA) ---\n");
+		printf("1. Chegada de Paciente (Inserir na Fila)\n");
+		printf("2. Listar Fila de Pacientes\n");
+		printf("3. Atender Paciente (Retirar da Fila)\n");
+		printf("4. Consultar Próximo da Fila\n");
+		printf("5. Verificar a Quantidade de Pacientes na Fila\n");
+		printf("0. Sair\n");
+		printf("Escolha uma opcao: ");
+		scanf("%d", &opcao);
+
+		switch(opcao){
+			case 1:
+				printf("Informe o ID do paciente: ");
+				scanf("%d", &id);
+
+				// O scanf deixa o Enter guardado na memória do teclado.
+				// O getchar descarta esse Enter para ele não atrapalhar o fgets abaixo.
+				getchar();
+
+				printf("Informe o Nome do paciente: ");
+				fgets(nome, sizeof(nome), stdin);
+
+				// O fgets guarda também o Enter digitado.
+				// strcspn encontra a posição do "\n" e nós colocamos ali o fim do texto,
+				// apagando a quebra de linha do nome.
+				nome[strcspn(nome, "\n")] = 0;
+
+				if (inserir(filaAtendimento, id, nome)){
+					printf(">> Paciente inserido com sucesso!\n");
+				} else {
+					printf(">> Erro ao inserir paciente.\n");
+				}
+				break;
+			case 2:
+				listarFila(filaAtendimento);
+				break;
+			case 3:
+				// O "!" significa "não": se remover NÃO deu certo, mostramos o erro
+				if (!remover(filaAtendimento)) {
+					printf(">> Erro ao atender paciente.\n");
+				} else {
+					printf(">> Primeiro paciente da fila atendido com sucesso.\n");
+				}
+				break;
+			case 4:
+				consultar(filaAtendimento);
+				break;
+			case 5:
+				int qtd = contar(filaAtendimento);
+				printf(">> Quantidade de pacientes na fila: %d.\n", qtd);
+				break;
+			case 0:
+				// Antes de encerrar, devolvemos toda a memória usada:
+				// primeiro os pacientes, depois a própria fila
+				esvaziarFila(filaAtendimento);
+				destruirFila(filaAtendimento);
+				printf(">> Encerrando o sistema...\n");
+				break;
+			default:
+				printf("Opcao invalida!\n");
+		}
+	} while (opcao != 0);
+
+	return 0;
+}

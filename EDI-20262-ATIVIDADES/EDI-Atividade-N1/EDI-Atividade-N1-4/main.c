@@ -86,3 +86,87 @@ int inserir(Fila f, int id, const char *nome){
 	// Ele entra no fim da fila, então não existe ninguém depois dele
 	novo->prox = NULL;
 
+	if (f->ini == NULL){
+		// Fila vazia: esse paciente é o primeiro de todos
+		f->ini = novo;
+	} else {
+		// Fila com gente: quem era o último agora aponta para o novo,
+		// formando mais um elo da corrente
+		f->fim->prox = novo;
+	}
+
+	// Em qualquer um dos dois casos, o novo paciente passa a ser o último da fila
+	f->fim = novo;
+	return 1;
+}
+
+/* Atende (remove) o primeiro paciente da fila.
+ * Devolve 1 se atendeu alguém e 0 se a fila estava vazia.
+ */
+int remover(Fila f){
+	// Não dá para remover de uma fila vazia
+	if (filaVazia(f)) return 0;
+
+	// "atual" guarda o primeiro paciente, para não perdermos o endereço dele
+	NoPtr atual = f->ini;
+
+	// O início da fila passa a ser o paciente seguinte
+	f->ini = atual->prox;
+
+	// Mostra na tela quem está sendo atendido
+	printf(">> Paciente em atendimento:\n");
+	printf(">> ID: %d - Nome: %s\n", atual->id, atual->nome);
+
+	// Como ele saiu da fila, devolvemos sua memória ao sistema
+	free(atual);
+	return 1;
+}
+
+/* Mostra quem é o primeiro da fila, SEM removê-lo. */
+void consultar(Fila f){
+	if (filaVazia(f)){
+		printf(">> Não foi possível consultar o próximo da fila.\n");
+		return;
+	}
+
+	// Como só queremos "espiar", lemos os dados direto de f->ini e não mexemos na fila
+	printf(">> Próximo paciente da fila:\n");
+	printf(">> ID: %d - Nome: %s\n", f->ini->id, f->ini->nome);
+}
+
+/* Conta quantos pacientes existem na fila. */
+int contar(Fila f){
+	if (filaVazia(f)){
+		return 0;
+	} else {
+		int i = 0;
+
+		// Começamos no primeiro paciente
+		NoPtr atual = f->ini;
+
+		// Andamos de paciente em paciente até chegar no NULL (fim da fila),
+		// somando 1 no contador a cada passo
+		while(atual != NULL){
+			i++;
+			atual = atual->prox;
+		}
+		return i;
+	}
+}
+
+/* Mostra na tela todos os pacientes da fila, na ordem de chegada. */
+void listarFila(Fila f){
+	// Se não há ninguém, não há o que listar
+	if (filaVazia(f)) return;
+
+	// "atual" é um ponteiro auxiliar que vai caminhar pela fila.
+	// Usamos ele para não perder o f->ini original.
+	NoPtr atual = f->ini;
+	printf("\n=== FILA DE PACIENTES ===\n");
+
+	// Enquanto não chegarmos no fim da fila (NULL), imprimimos o paciente atual
+	// e avançamos para o próximo
+	while (atual != NULL){
+		printf("ID: %d - Nome: %s\n", atual->id, atual->nome);
+		atual = atual->prox;
+	}
